@@ -60,13 +60,19 @@ public class Mall extends Company {
         boolean a = this.removeFromCurrentStock(this.consumptionRate);
 
         if(state == State.IDLE || this.getCurrentStock() < this.minThresholdStock){
-            state = State.ORDERING;
-            // TODO : check quantity ordered policy: depends on waiting list
-            shipment = new Shipment(cooperative, this.maxStock - this.getCurrentStock());
-            boolean b = this.cooperative.orderStock(this, this.maxStock - this.getCurrentStock());
-
-
             
+            // TODO : check quantity ordered policy: depends on waiting list
+            Double desiredOrderQuantity = this.maxStock - this.getCurrentStock();
+            if(desiredOrderQuantity > cooperative.getMinOrder()){
+                state = State.ORDERING;
+
+                while(desiredOrderQuantity > cooperative.getMinOrder()) {
+                    Double orderedQuantity = Math.max(desiredOrderQuantity, cooperative.getMaxOrder());
+                    shipment = new Shipment(cooperative, orderedQuantity);
+                    boolean b = this.cooperative.order(this, orderedQuantity);
+                    desiredOrderQuantity -= orderedQuantity;
+                }
+            }  
         }
     }
 

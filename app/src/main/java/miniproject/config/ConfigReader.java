@@ -1,11 +1,5 @@
 package miniproject.config;
 
-import miniproject.Farmer;
-import miniproject.Mall;
-import miniproject.Position;
-import miniproject.config.Config;
-import miniproject.utils.Time;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -24,8 +18,13 @@ public final class ConfigReader {
         Pattern commaDelimiter = Pattern.compile(",");
         try {
             this.farmersParams = readCSV(new File(Config.FARMER_DB_PATH), commaDelimiter);
+        } 
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } 
+        try {
             this.mallsParams = readCSV(new File(Config.MALL_DB_PATH), commaDelimiter);
-
+            
         } 
         catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -44,8 +43,7 @@ public final class ConfigReader {
                 } else if(row.size() != rowLength) {
                     throw new IllegalArgumentException("Row length mismatch");
                 }
-
-                records.add(getRecordFromLine(scanner.nextLine(), commaDelimiter));
+                records.add(row);
                 }
             }
         return records;

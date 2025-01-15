@@ -10,10 +10,10 @@ import miniproject.utils.Time;
 
 public final class Config {
 
-
+    
     // Files
-    public static final String FARMER_DB_PATH = "app/src/main/java/miniproject/farmers.csv";
-    public static final String MALL_DB_PATH = "app/src/main/java/miniproject/resources/malls.csv";
+    public static final String FARMER_DB_PATH = "app/src/main/resources/farmer_db.csv";
+    public static final String MALL_DB_PATH = "app/src/main/resources/mall_db.csv";
 
     public static final String LOG_PATH = "app/src/main/java/miniproject/output/log.txt"; 
     public static final boolean LOG_VERBOSE = true;
@@ -30,6 +30,8 @@ public final class Config {
     
     public static final Position COOPERATIVE_POSITION = new Position(46.183847, 6.134639);
     public static final double COOPERATIVE_MAX_STOCK = 1000;
+    public static final double COOPERATIVE_MAX_ORDER = MAX_TRUCK_CAPACITY;
+    public static final double COOPERATIVE_MIN_ORDER = MIN_TRUCK_CAPACITY;
     
 
 

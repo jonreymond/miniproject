@@ -1,7 +1,7 @@
-﻿name,longitude,latitude,freqDelivering,quantityDelivering
-Jack,46.266269,6.228869,1,5
-Mary,46.228756,6.286890,2,3
-Phil,46.161026,6.169989,3,10
-Greg,46.151513,6.043646,4,1
-Lucy,46.199773,5.988714,5,7
-Peter,46.307907,6.129477,2,3
+﻿name,longitude,latitude,maxStock,shipmentInterval,productionRate
+Jack,46.266269,6.228869,100,5,1
+Mary,46.228756,6.286890,200,3,2.1
+Phil,46.161026,6.169989,300,10,3.1
+Greg,46.151513,6.043646,400,1,0.5
+Lucy,46.199773,5.988714,500,7,1.1
+Peter,46.307907,6.129477,200,3,2.4

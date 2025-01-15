@@ -70,7 +70,6 @@ public class Truck extends Entity {
     public void update(Time dt) {
         switch(this.state){
             case IDLE:
-                //TODO : determine something to do ?
                 break;
             case DELIVERING:
                 Shipment shipment = shipments.get(0);
@@ -156,6 +155,20 @@ public class Truck extends Entity {
             return 0.0;
     }
 
+    /**
+     * Adds a shipment to the truck's delivery route.
+     *
+     * @param shipment The shipment to be added to the truck's delivery route.
+     * @return true if the shipment is successfully added, false otherwise.
+     *
+     * This method checks if the truck has enough capacity to accommodate the shipment's quantity.
+     * If the truck has enough capacity, the shipment is added to the truck's list of shipments,
+     * and the shipment's quantity is loaded onto the truck.
+     * If the truck does not have enough capacity, the method returns false without adding the shipment.
+     *
+     * @see Shipment
+     * @see Truck#load(Double)
+     */
     public Boolean addShipment(Shipment shipment) {
         Double reservedGoods = 0.0;
         for(Shipment s : shipments){
@@ -165,19 +178,56 @@ public class Truck extends Entity {
             return false;
         }
         shipments.add(shipment);
+        this.load(shipment.getQuantity());
         return true;
     }
 
+    /**
+     * Initiates a delivery route for the truck.
+     *
+     * @return true if the delivery route is successfully initiated, false otherwise.
+     *
+     * This method checks if the truck is ready to start a delivery route by calling the {@link #readyToGo()} method.
+     * If the truck is ready, the method sets the truck's state to {@link State#DELIVERING} and returns true.
+     * If the truck is not ready, the method returns false without changing the truck's state.
+     *
+     * @see #readyToGo()
+     */
     public Boolean send(){
-        if(shipments.isEmpty() || this.state != State.IDLE)
+        if(!this.readyToGo())
             return false;
-        // TODO : check here if minCapacity is respected
         state = State.DELIVERING;
         return true;
     }
 
+    /**
+     * Retrieves the current state of the truck.
+     *
+     * @return The current state of the truck.
+     *
+     * The truck can be in one of the following states:
+     * - IDLE: The truck is not currently delivering or returning to the company.
+     * - DELIVERING: The truck is currently on a delivery route.
+     * - RETURNING: The truck is returning to the company after completing a delivery route.
+     */
     public State getState() {
         return state;
+    }
+
+    /**
+     * Checks if the truck is ready to start a delivery route.
+     *
+     * @return true if the truck is ready to go, false otherwise.
+     *
+     * The truck is considered ready to go if:
+     * - There are no shipments to deliver.
+     * - The truck's current state is IDLE.
+     * - The truck's current capacity is greater than or equal to its minimum capacity.
+     *
+     * This method does not perform any actions; it only checks the conditions.
+     */
+    public boolean readyToGo(){
+        return (!shipments.isEmpty() && (this.state != State.IDLE) && this.currentCapacity >= this.minCapacity);
     }
 
     

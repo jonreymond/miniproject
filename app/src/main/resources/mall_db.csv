@@ -1,7 +1,7 @@
-﻿name,longitude,latitude,fullConsumption,maxStock
-Berliner,52.463226,13.264468,30,1000
-Madrido,40.364091,-3.629454,120,2000
-Parisi,48.748163,2.243327,40,200
-Warsawa,52.202629,21.082544,200,2000
-Bucharesti,44.397705,26.133015,150,3000
-Napolitan,40.853345,14.380888,80,400
+﻿name,longitude,latitude,maxStock,consumptionRate,minThresholdStock
+Berliner,52.463226,13.264468,30,1,10
+Madrido,40.364091,-3.629454,120,2,5
+Parisi,48.748163,2.243327,40,2.1,5
+Warsawa,52.202629,21.082544,200,0.6,8
+Bucharesti,44.397705,26.133015,150,1.1,3
+Napolitan,40.853345,14.380888,80,2.2,4
