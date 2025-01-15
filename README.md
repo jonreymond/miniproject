@@ -1,7 +1,12 @@
-This project is the implementation of the following Task:
+# Miniproject Lombard Odier
+## Miniproject Organisation
+- all the code is in the app/src/main/java/miniproject directory
+- the main is contained in app/src/main/java/miniproject/app/App.java
+- The configuration parameters are in app/src/main/java/miniproject/config/Config.java
+- A sample database for the farmers and the malls are in app/src/main/resources
 
 
-
+## Miniproject Objective
 L’objectif est de modéliser le système d’une coopérative agricole et d’en simuler le fonctionnement :
 Dans une coopérative, plusieurs producteurs  livrent leur marchandise dans un entrepôt commun
 L’entrepôt a forcément une taille limitée
