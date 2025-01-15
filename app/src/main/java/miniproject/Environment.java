@@ -58,9 +58,5 @@ public final class Environment {
         for (Mall mall : malls)
             mall.update(dt);
 
-    }
-
-
-
-    
+    }    
 }

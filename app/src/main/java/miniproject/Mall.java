@@ -1,5 +1,8 @@
 package miniproject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import miniproject.utils.Time;
 
 public class Mall extends Company {
@@ -11,7 +14,7 @@ public class Mall extends Company {
     private final Double consumptionRate;
     private final Double minThresholdStock;
     private Cooperative cooperative;
-    private Shipment shipment;
+    private List<Shipment> shipments;
     private State state;
 
 
@@ -22,6 +25,7 @@ public class Mall extends Company {
         this.minThresholdStock = minThresholdStock;
         this.state = State.IDLE;
         this.cooperative = cooperative;
+        this.shipments = new ArrayList<Shipment>();
     }
 
     public final static class Builder {
@@ -56,20 +60,17 @@ public class Mall extends Company {
     @Override
     public void update(Time dt) {
 
-        // TODO: check what to do with
-        boolean a = this.removeFromCurrentStock(this.consumptionRate);
+        this.removeFromCurrentStock(this.consumptionRate);
 
-        if(state == State.IDLE || this.getCurrentStock() < this.minThresholdStock){
-            
-            // TODO : check quantity ordered policy: depends on waiting list
+        if(state == State.IDLE && this.getCurrentStock() < this.minThresholdStock){
             Double desiredOrderQuantity = this.maxStock - this.getCurrentStock();
             if(desiredOrderQuantity > cooperative.getMinOrder()){
                 state = State.ORDERING;
 
                 while(desiredOrderQuantity > cooperative.getMinOrder()) {
-                    Double orderedQuantity = Math.max(desiredOrderQuantity, cooperative.getMaxOrder());
-                    shipment = new Shipment(cooperative, orderedQuantity);
-                    boolean b = this.cooperative.order(this, orderedQuantity);
+                    Double orderedQuantity = Math.min(desiredOrderQuantity, cooperative.getMaxOrder());
+                    shipments.add(new Shipment(cooperative, orderedQuantity));
+                    this.cooperative.order(this, orderedQuantity);
                     desiredOrderQuantity -= orderedQuantity;
                 }
             }  
@@ -79,8 +80,10 @@ public class Mall extends Company {
     @Override
     public boolean receiveGoods(double quantity) {
         if(state == State.ORDERING){
+            Shipment shipment = getShipmentFromQuantity(currentStock);
             if(shipment.getQuantity() == quantity){
                 boolean success = this.addToCurrentStock(quantity);
+                // cooperative.inform(this, "Correct quantity received: " + quantity);
                 shipment = null;
                 state = State.IDLE;
                 return success;
@@ -91,18 +94,37 @@ public class Mall extends Company {
             }
             else {
                 boolean success = this.addToCurrentStock(shipment.getQuantity());
-                cooperative.inform(shipment, "Incorrect quantity received: " + quantity + ", expected: " + shipment.getQuantity());
+                // cooperative.inform(this,"Incorrect quantity received: " + quantity + ", expected: " + shipment.getQuantity());
                 shipment = null;
                 state = State.IDLE;
                 return success;
             }     
         }
         else {
-            cooperative.inform(null, "No shipment asked");
+            // cooperative.inform(this,": Incorrect shipment arrival: No shipment asked");
             return false;
         }
     }
 
+    private Shipment getShipmentFromQuantity(Double quantity){
+        List<Shipment> ships= new ArrayList<>(this.shipments);
+        Shipment trueShipment = null;
+        for(Shipment shipment : ships){
+            if(shipment.getQuantity() == quantity){
+                trueShipment = shipment;
+                break;
+            }
+        }
+        if(trueShipment == null && !ships.isEmpty()){
+            trueShipment = ships.get(0);
+        }
+        return trueShipment;
+      
+    }
 
+    @Override
+    public void inform(Entity entity, String message) {
+        cooperative.inform(this, message);
+    }
 
 }

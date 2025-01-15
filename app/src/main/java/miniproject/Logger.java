@@ -5,13 +5,15 @@ import miniproject.config.Config;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+
+// import java.util.List;
 
 public final class Logger {
+    // private List<String> messages;
 
 
     public Logger() {
+
 
         // check if file exists
         File logFile = new File(Config.LOG_PATH);
@@ -28,13 +30,14 @@ public final class Logger {
         if (Config.LOG_VERBOSE) {
             System.out.println(message);
         }
-        try {
-                Files.write(Paths.get(Config.LOG_PATH), (message + "\r\n").getBytes() , StandardOpenOption.APPEND);
-                    }catch (IOException e) {
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        //TODO: log to file
+        // try {
+        //         Files.write(Paths.get(Config.LOG_PATH), (message + "\r\n").getBytes() , StandardOpenOption.APPEND);
+        //             }catch (IOException e) {
+        // }
+        // catch (Exception e) {
+        //     e.printStackTrace();
+        // }
 
     }
 

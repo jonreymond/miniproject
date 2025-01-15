@@ -66,25 +66,27 @@ public class Farmer extends Company {
 
     @Override
     public void update(Time dt) {
+
         this.time = this.time.plus(dt);
-        // TODO: check what to do with
-        boolean isFull = this.addToCurrentStock(this.productionRate);
+
+        addToCurrentStock(this.productionRate);
 
         if(this.time.compareTo(this.shipmentInterval) >= 0){
-
             this.time = this.time.minus(this.shipmentInterval);
-
-            
-            if(this.truck.getState() == Truck.State.IDLE){
+                       
+            if(this.truck.getState() == Truck.State.IDLE && (this.getCurrentStock() > this.cooperative.getMinOrder())){
                
                 double loadedGoods =  this.truck.loadMax(this.getCurrentStock());
-                boolean successLoad = this.removeFromCurrentStock(loadedGoods);
+                this.removeFromCurrentStock(loadedGoods);
 
                 boolean successReserve = this.cooperative.reserveStock(this, truck.getCurrentCapacity());
+                
                 if(successReserve){
                     Shipment shipment = new Shipment(this.cooperative, truck.getCurrentCapacity());
                     boolean a = this.truck.addShipment(shipment);
+                    assert a;
                     boolean b = this.truck.send();
+                    assert b;
                     
                 }
             }
@@ -122,6 +124,10 @@ public class Farmer extends Company {
         return this.addToCurrentStock(quantity);
     }
 
+    @Override
+    public void inform(Entity entity, String message) {
+        this.cooperative.inform(this, message);
+    }
 
     
 }

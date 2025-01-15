@@ -28,7 +28,7 @@ public class Truck extends Entity {
 
 
     public Truck(Uid id, Double minCapacity, Double maxCapacity, Company company) {
-        super("Truck", new Position(company.getPosition()));
+        super(id.toString(), new Position(company.getPosition()));
         this.id = id;
         this.minCapacity = minCapacity;
         this.maxCapacity = maxCapacity;
@@ -75,10 +75,11 @@ public class Truck extends Entity {
                 Shipment shipment = shipments.get(0);
                 Boolean isArrived = move(shipment.getDestination(), dt);
                 if(isArrived){
-                    //TODO : deliver goods
                     Boolean success = deliver(shipment);
                     // inform company of success
-                    company.receiveShipmentDetails(shipment, success);
+                    String isSuccessfull = success ? "success" : "failure";
+                    company.inform(this, shipment.getClient().getName() + " shipment is a " + isSuccessfull 
+                                    + ", quantity " + (Math.round(shipment.getQuantity() * 100.0) / 100.0));
 
                     shipments.remove(0);
 
@@ -102,7 +103,7 @@ public class Truck extends Entity {
         boolean isArrived = false;
 
         //TODO : see which factor to use for time
-        Double distanceCovered = Config.TRUCK_SPEED * dt.toSeconds();
+        Double distanceCovered = Config.TRUCK_SPEED * dt.toHours();
         this.position = Position.moveTo(this.position, destination, distanceCovered);
 
         if(position.equals(destination)){
@@ -120,17 +121,13 @@ public class Truck extends Entity {
     }
 
     private Boolean deliver(Shipment shipment) {
-        // TODO : see if do something else (normally should not happen), like inform the company
-        if(shipment.getQuantity() > currentCapacity){
-            return false;
-        }
         Boolean success = shipment.getClient().receiveGoods(shipment.getQuantity());
+        
         if(success){
             currentCapacity -= shipment.getQuantity();
             return true;
         }
         return false;
-
     }
 
 
@@ -170,16 +167,10 @@ public class Truck extends Entity {
      * @see Truck#load(Double)
      */
     public Boolean addShipment(Shipment shipment) {
-        Double reservedGoods = 0.0;
-        for(Shipment s : shipments){
-            reservedGoods += s.getQuantity();
-        }
-        if(this.currentCapacity - reservedGoods < shipment.getQuantity()){
-            return false;
-        }
+        Utils.requireNonNull(shipment);
         shipments.add(shipment);
-        this.load(shipment.getQuantity());
-        return true;
+        
+        return this.load(shipment.getQuantity());
     }
 
     /**
@@ -194,8 +185,10 @@ public class Truck extends Entity {
      * @see #readyToGo()
      */
     public Boolean send(){
-        if(!this.readyToGo())
+        if(!this.readyToGo()){
+
             return false;
+        }    
         state = State.DELIVERING;
         return true;
     }
@@ -227,7 +220,7 @@ public class Truck extends Entity {
      * This method does not perform any actions; it only checks the conditions.
      */
     public boolean readyToGo(){
-        return (!shipments.isEmpty() && (this.state != State.IDLE) && this.currentCapacity >= this.minCapacity);
+        return (!shipments.isEmpty() && (this.state == State.IDLE) && this.currentCapacity >= this.minCapacity);
     }
 
     

@@ -1,6 +1,7 @@
 package miniproject;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,27 +21,14 @@ public class Cooperative extends Company {
     private Set<Truck> trucks;
     private final Double maxOrder;
     private final Double minOrder;
+    private Logger logger;
+    private Time time;
 
     private Double reservedStock;
 
     private List<Shipment> notProcessedShipments;
     private List<Shipment> processedShipments;
 
-
-
-    public Cooperative(Set<Farmer> farmers, Set<Mall> malls, Set<Truck> trucks) {
-        super("Cooperative", Config.COOPERATIVE_POSITION, Config.COOPERATIVE_MAX_STOCK);
-        this.maxOrder = Config.COOPERATIVE_MAX_ORDER;
-        this.minOrder = Config.COOPERATIVE_MAX_ORDER;
-        this.farmers = farmers;
-        this.malls = malls;
-        this.trucks = trucks;
-
-        this.reservedStock = 0.0;
-
-        this.notProcessedShipments = new LinkedList<Shipment>();
-        this.processedShipments = new LinkedList<Shipment>();
-    }
 
     public Cooperative() {
         super("Cooperative", Config.COOPERATIVE_POSITION, Config.COOPERATIVE_MAX_STOCK);
@@ -56,6 +44,9 @@ public class Cooperative extends Company {
 
         this.notProcessedShipments = new LinkedList<Shipment>();
         this.processedShipments = new LinkedList<Shipment>();
+
+        this.logger = new Logger();
+        this.time = Time.ZERO;
     }
 
 
@@ -68,6 +59,7 @@ public class Cooperative extends Company {
                 truck.send();
             }
         }
+        time = dt;
     }
 
     /**
@@ -150,7 +142,7 @@ public class Cooperative extends Company {
      *         {@code false} otherwise.
      */
     public Boolean reserveStock(Farmer farmer, Double quantity) {
-        if (reservedStock + quantity > maxStock) {
+        if ((reservedStock + quantity + this.getCurrentStock()) > maxStock) {
             return false;
         }
 
@@ -178,7 +170,6 @@ public class Cooperative extends Company {
         }
         Shipment shipment = new Shipment(mall, quantity);
         notProcessedShipments.add(shipment);
-        System.out.println("Order accepted");
         return true;
     }
 
@@ -211,20 +202,16 @@ public class Cooperative extends Company {
      * and the shipment is moved from the notProcessedShipments list to the processedShipments list.
      */
     private void processShipments() {
-        System.out.println("process shipments");
-        if(notProcessedShipments.isEmpty())
+        List<Shipment> notProcessedShip = new ArrayList<>(this.notProcessedShipments);
+        if(notProcessedShip.isEmpty())
             return;
 
-        boolean canDeliver = true;
-        int numberOfShipments = notProcessedShipments.size();
-        int i = 0;
-        while (canDeliver && i < numberOfShipments) {
-            Shipment shipment = notProcessedShipments.get(0);
+        for(Shipment shipment : notProcessedShip){
             if (shipment.getQuantity() <= this.getCurrentStock()) {
 
                 Truck truck = getAvailableTruck(shipment.getQuantity());
                 if(truck == null){
-                    canDeliver = false;
+                    break;
                 }
                 else{
                     truck.addShipment(shipment);
@@ -232,13 +219,8 @@ public class Cooperative extends Company {
                     this.notProcessedShipments.remove(shipment);
                     this.processedShipments.add(shipment);
                 }
-
-            } else {
-                canDeliver = false;
-            }
-            i++;
         }
-        System.out.println("Shipments processed");
+        }
     }
 
     private Truck getAvailableTruck(Double quantity){
@@ -252,16 +234,24 @@ public class Cooperative extends Company {
         return availableTruck;
     }
 
-    public void inform(Shipment shipment, String message) {
-        // TODO implement
+    @Override
+    public void inform(Entity entity, String message) {
+        String typeEntity;
+        if(entity.getClass() == Mall.class)
+            typeEntity = "Mall ";
+        else if (entity.getClass() == Farmer.class)
+            typeEntity = "Farmer ";
+        else if (entity.getClass() == Truck.class)
+            typeEntity = "Truck ";
+        else
+            typeEntity = "";
+        String msg = typeEntity + entity.getName() + ": " + message;
+        String date = this.time.toString();
+        this.logger.log(date + " | " + msg);
     }
 
     @Override
     public boolean receiveGoods(double quantity) {
-        if (reservedStock < quantity) {
-            return false;
-        }
-        // TODO : other method to do that
         reservedStock -= quantity;
         return this.addToCurrentStock(quantity);
     }

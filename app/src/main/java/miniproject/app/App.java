@@ -7,26 +7,15 @@ import java.util.List;
 
 import miniproject.Environment;
 import miniproject.Logger;
-
+import miniproject.config.Config;
 import miniproject.config.ConfigReader;
 import miniproject.utils.Time;
 
 
 
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
-
-    // remark : relative path + will overwrite the file
-    public static String output_path_filename = "app/src/main/resources/log.txt";
-
-    public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
-
-
-        Logger logger = new Logger();
-
+    public void launch() {
+        System.out.println("Launch application");
         ConfigReader configReader = new ConfigReader();
 
         List<List<String>> farmersParams = configReader.getFarmersParams();
@@ -38,12 +27,17 @@ public class App {
 
         Time time = Time.ZERO;
 
-        int maxInter = 10;
-
-        for(int i = 0; i < maxInter; i++){
-            System.out.println(time);
+        for(int i = 0; i < Config.MAX_ITER; i++){
             env.update(time);
-            time = time.plus(Time.fromSeconds(10));
+            time = time.plus(Time.fromMinutes(Config.UPDATE_STEP_IN_MINUTES));
         }
+        System.out.println("End application");
+
+    }
+
+
+
+    public static void main(String[] args) {
+        new App().launch();   
     }
 }

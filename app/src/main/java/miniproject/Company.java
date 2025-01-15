@@ -6,7 +6,7 @@ package miniproject;
 public abstract class Company extends Entity {
     // TODO : say if rename to currentStock
     protected Double currentStock;
-    protected Double maxStock;
+    protected final Double maxStock;
 
 
     public Company(String name, Position address, Double maxStock) {
@@ -25,10 +25,15 @@ public abstract class Company extends Entity {
      */
     public abstract boolean receiveGoods(double quantity);
 
-    public void receiveShipmentDetails(Shipment shipment, Boolean success) {
-        // TODO : add a logger
-        System.err.println("Shipment to " + shipment.getClient().getName() + " " + (success ? "succeeded" : "failed"));
-    }
+
+
+    /**
+     * This method is responsible for sending a notification to a specified entity with a given message.
+     *
+     * @param entity The entity to which the notification will be sent.
+     * @param message The content of the notification message.
+     */
+    public abstract void inform(Entity entity, String message);
 
     /**
      * This method is responsible for adding a specified quantity of goods to the company's stock.
@@ -38,8 +43,7 @@ public abstract class Company extends Entity {
      *         {@code false} if the addition would exceed the maximum stock capacity.
      */
     protected Boolean addToCurrentStock(Double quantity){
-        //TODO : handle if want max load, another param ?
-        if(currentStock + quantity > maxStock){
+        if((currentStock + quantity) > maxStock){
             return false;
         }
         currentStock += quantity;
@@ -69,5 +73,7 @@ public abstract class Company extends Entity {
     public Double getCurrentStock() {
         return currentStock;
     }
+
+    
    
 }

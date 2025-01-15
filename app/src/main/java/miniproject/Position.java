@@ -93,5 +93,10 @@ public final class Position {
     public int hashCode() {
         return Objects.hash(latitude, longitude);
     }
+
+    @Override
+    public String toString() {
+        return "Latitude: " + latitude + ", Longitude: " + longitude;
+    }
         
 }

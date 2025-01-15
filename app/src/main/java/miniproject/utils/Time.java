@@ -1,130 +1,132 @@
 package miniproject.utils;
 
 import java.util.Objects;
-
+import java.util.Date;
 /**
- * Simple classe utilitaire représentant une unité de mesure de temps.
+ * Class representing a unit of time
+ * From https://github.com/brogovia/antSimulation/blob/master/projet/ch/epfl/moocprog/
  */
 public final class Time implements Comparable<Time> {
     public static final Time ZERO = new Time(0);
 
-    private final long timeInMs;
+    private final long timeInMinutes;
 
-    // Empêche l'instanciation directe de Time car révellerait
-    // la représentation interne de cette classe.
-    private Time(long timeInMs) {
-        this.timeInMs = timeInMs;
+    // prevent direct instantiation
+    private Time(long timeInMinutes) {
+        this.timeInMinutes = timeInMinutes;
     }
 
     /**
-     * Instancie un nouvel objet de type {@link Time} à partir
-     * d'un temps en secondes.
+     * Instantiate a new object of type {@link Time} from a time in hours
      *
      * @param seconds Le temps en secondes
      * @return Une nouvelle instance de {@link Time} avec la valeur
      *         spécifiée en paramètre.
      */
-    public static Time fromSeconds(double seconds) {
-        return new Time((long) (seconds * 1000));
+    public static Time fromHours(double hours) {
+        return new Time((long) (hours * 60));
     }
 
     /**
-     * Instancie un nouvel objet de type {@link Time} à partir
-     * d'un temps en milli-secondes.
+     * Instantiate a new object of type {@link Time} from a time in minutes
      *
-     * @param milliseconds Le temps en secondes
+     * @param minutes The time in minutes
      * @return Une nouvelle instance de {@link Time} avec la valeur
      *         spécifiée en paramètre.
      */
-    public static Time fromMilliseconds(long milliseconds) {
-        return new Time(milliseconds);
+    public static Time fromMinutes(long minutes) {
+        return new Time(minutes);
     }
 
-    /**
-     * Retourne la valeur de cette instance en secondes.
+     /**
+     * Instantiate a new object of type {@link Time} from a time in minutes
      *
-     * @return La valeur de cette instance en secondes
+     * @param days The time in days
+     * @return Une nouvelle instance de {@link Time} avec la valeur
+     *         spécifiée en paramètre.
      */
-    public double toSeconds() {
-        return timeInMs / 1000d;
+    public static Time fromDays(double days) {
+        return new Time((long)(days * 24 * 600));
     }
 
     /**
-     * Retourne la valeur de cette instance en milli-secondes.
+     * return the value of this instance in hours
      *
-     * @return La valeur de cette instance en milli-secondes
+     * @return the value of this instance in hours
      */
-    public long toMilliseconds() {
-        return timeInMs;
+    public double toHours() {
+        return timeInMinutes / 60d;
     }
 
     /**
-     * Retourne une nouvelle instance de {@link Time} représentée
-     * par l'adition des temps de {@code this} et {@code that}.
-     * <br/>
-     * Note: {@code this} n'est pas modifié, cette méthode
-     * renvoie un nouvel objet !
+     * return the value of this instance in hours
      *
-     * @param that Le temps à aditionner avec {@code this}
-     * @return Une nouvelle instance représantant l'adition de
-     *         {@code this} et {@code that}
+     * @return the value of this instance in hours
+     */
+    public double toDays() {
+        return timeInMinutes / (60d * 24d);
+    }
+    
+
+    /**
+     * return the value of this instance in minutes
+     *
+     * @return the value of this instance in minutes
+     */
+    public long toMinutes() {
+        return timeInMinutes;
+    }
+
+  
+    /**
+     * Adds the given {@link Time} instance to the current instance.
+     *
+     * @param that The {@link Time} instance to add to the current instance.
+     * @return A new {@link Time} instance representing the result of the addition.
+     *
+     * @throws NullPointerException If the given instance is {@code null}.
      */
     public Time plus(Time that) {
-        return new Time(this.timeInMs + that.timeInMs);
+        if (that == null) {
+            throw new NullPointerException("The given Time instance cannot be null.");
+        }
+        return new Time(this.timeInMinutes + that.timeInMinutes);
     }
 
     /**
-     * Retourne une nouvelle instance de {@link Time} représentée
-     * par la soustraction des temps de {@code this} et {@code that}.
-     * <br/>
-     * Note: {@code this} n'est pas modifié, cette méthode
-     * renvoie un nouvel objet !
+     * Subtracts the given {@link Time} instance from the current instance.
      *
-     * @param that Le temps à aditionner avec {@code this}
-     * @return Une nouvelle instance représantant la soustraction de
-     *         {@code this} et {@code that}
+     * @param that The {@link Time} instance to subtract from the current instance.
+     * @return A new {@link Time} instance representing the result of the subtraction.
+     *         The result will be negative if the current instance is less than the given instance.
+     *
+     * @throws NullPointerException If the given instance is {@code null}.
      */
     public Time minus(Time that) {
-        return new Time(this.timeInMs - that.timeInMs);
+        if (that == null) {
+            throw new NullPointerException("The given Time instance cannot be null.");
+        }
+        return new Time(this.timeInMinutes - that.timeInMinutes);
     }
 
-    /**
-     * Retourne une nouvelle instance de {@link Time} représentée
-     * par la multiplication du temps de {@code this} par {@code scalar}.
-     * <br/>
-     * Note: {@code this} n'est pas modifié, cette méthode
-     * renvoie un nouvel objet !
-     *
-     * @param scalar Le nombre multiplié par la valeur du temps
-     * @return Une nouvelle intance représentant la multiplication de
-     *         {@code this} et {@code scalar}
-     */
-    public Time times(double scalar) {
-        return new Time((long) (this.timeInMs * scalar));
-    }
 
     /**
-     * Indique si le temps répresenté par {@code this} est positif ou nul.
+     * Checks if the current instance of {@link Time} is positive.
+     * A positive time instance represents a duration greater than zero.
      *
-     * @return {@code true} si le temps est positif ou nul, {@code false} sinon
+     * @return {@code true} if the time is positive (greater than or equal to zero),
+     *         {@code false} otherwise.
      */
     public boolean isPositive() {
-        return timeInMs >= 0;
+        return timeInMinutes >= 0;
     }
 
-    /**
-     * Compare {@code this} avec {@code that}. Retourne un entier négatif, zéro ou
-     * positif si {@code this} est plus petit, égal ou plus grand que {@code that}.
-     *
-     * @param that L'objet {@link Time} à comparer avec {@code this}
-     * @return un entier négatif, zéro ou positif si {@code this} est plus petit,
-     *         égal ou plus grand que {@code that}.
-     */
+
     @Override
     public int compareTo(Time that) {
-        if(this.timeInMs < that.timeInMs) {
+        if(this.timeInMinutes < that.timeInMinutes) {
             return -1;
-        } else if(this.timeInMs > that.timeInMs) {
+        } else if(this.timeInMinutes > that.timeInMinutes) {
             return 1;
         } else {
             return 0;
@@ -135,7 +137,7 @@ public final class Time implements Comparable<Time> {
     public boolean equals(Object o) {
         if(o instanceof Time) {
             Time that = (Time) o;
-            return that.timeInMs == this.timeInMs;
+            return that.timeInMinutes == this.timeInMinutes;
         } else {
             return false;
         }
@@ -143,11 +145,12 @@ public final class Time implements Comparable<Time> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(timeInMs);
+        return Objects.hash(timeInMinutes);
     }
 
     @Override
     public String toString() {
-        return timeInMs + " ms";
+        return (new Date(timeInMinutes * 60 * 1000)).toString();
+
     }
 }
