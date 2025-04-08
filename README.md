@@ -7,17 +7,6 @@
 
 
 ## Miniproject Objective
-L’objectif est de modéliser le système d’une coopérative agricole et d’en simuler le fonctionnement :
-Dans une coopérative, plusieurs producteurs  livrent leur marchandise dans un entrepôt commun
-L’entrepôt a forcément une taille limitée
-Les agriculteurs livrent à une fréquence différente, entre 1 et 5 fois par semaine
-Les livraisons peuvent être de tailles différentes
-La coopérative dispose de plusieurs camions qui fonctionnent en 24/7 pour charger la marchandise depuis l’entrepôt et la livrer vers des destinations différentes en europe (hypermarchés)
-Le temps de livraison du camion dépend de sa destination
- 
-L’objectif est de modéliser ce système et ensuite d’en simuler le fonctionnement sur une durée déterminée (plusieurs mois) avec différents paramètres :
-Nombre d’agriculteurs
-Taille de l’entrepôt
-Capacité min et max des camions
-Nombre de camions
-On peut se contenter de faire un log à chaque livraison dans l’entrepôt ou vers un hypermarché
+The objective is to model the system of an agricultural cooperative and simulate its operation: In a cooperative, several producers deliver their goods in a common warehouse. The warehouse has necessarily a limited size. Farmers deliver at a different frequency between 1 and 5 times a week. Deliveries can be of different sizes. The cooperative has several trucks that operate in 24/7 to load the goods from the warehouse and deliver it to different destinations in Europe (hypermarkets). The delivery time of the truck depends on its destination. 
+
+The objective is to model this system and then simulate its operation over a specified period (several months) with different parameters: Number of farmers, Size of warehouse, Min and max capacity of trucks Number of trucks We can just log each delivery in the warehouse or to a hypermarket
