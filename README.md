@@ -1,4 +1,4 @@
-# Miniproject Lombard Odier
+# Modelling the system of an agricultural cooperative
 ## Miniproject Organisation
 - all the code is in the app/src/main/java/miniproject directory
 - the main is contained in app/src/main/java/miniproject/app/App.java
